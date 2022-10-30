@@ -1,1 +1,0 @@
-export { ImageGrabber } from './ImageGrabber';

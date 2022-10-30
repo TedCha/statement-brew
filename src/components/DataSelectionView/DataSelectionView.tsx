@@ -1,7 +1,7 @@
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import React, { useState } from 'react';
-import { FileGrab } from 'src/types';
-import { ImageGrabber } from '../ImageGrabber';
+import { ImageGrab } from 'src/interfaces';
+import { ImageGrabberForm } from '../ImageGrabberForm';
 
 interface DataSelectionViewProps {
   files: FileList;
@@ -12,10 +12,13 @@ export const DataSelectionView = ({
   files,
 }: DataSelectionViewProps): JSX.Element => {
   const [currentFile, setCurrentFile] = useState<File>(files[0]);
-  const [currentFileGrabs, setCurrentFileGrabs] = useState<FileGrab[]>([]);
+  const [currentImageGrabs, setCurrentImageGrabs] = useState<ImageGrab[]>([]);
 
-  const fileGrabHandler = (data: FileGrab): void => {
-    setCurrentFileGrabs(currentFileGrabs.concat(data));
+  const imageGrabHandler = (data?: ImageGrab): void => {
+    if (data != null) {
+      setCurrentImageGrabs(currentImageGrabs.concat(data));
+      console.debug(data);
+    }
   };
 
   return (
@@ -25,7 +28,11 @@ export const DataSelectionView = ({
         flexDirection: 'column',
       }}
     >
-      <ImageGrabber image={currentFile} imageGrabHandler={fileGrabHandler} />
+      <ImageGrabberForm
+        image={currentFile}
+        imageGrabHandler={imageGrabHandler}
+      />
+      <Button variant='contained'>Finish</Button>
     </Box>
   );
 };

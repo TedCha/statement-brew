@@ -1,8 +1,9 @@
 import { Box, Button, Typography } from '@mui/material';
 
 interface UploadViewProps {
-  onFileChange: (e: React.FormEvent<HTMLInputElement>) => void
+  onFileChange: (e: React.FormEvent<HTMLInputElement>) => void;
 }
+
 export const UploadView = ({ onFileChange }: UploadViewProps): JSX.Element => {
   return (
     <Box
@@ -11,7 +12,7 @@ export const UploadView = ({ onFileChange }: UploadViewProps): JSX.Element => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '100%'
+        minHeight: '100%',
       }}
     >
       <Typography>
