@@ -1,5 +1,5 @@
-import { Box, Button } from '@mui/material';
-import React, { useState } from 'react';
+import { Button } from '@mui/material';
+import React, { Fragment, useRef, useState } from 'react';
 import { ImageGrab } from 'src/interfaces';
 import { ImageGrabberForm } from '../ImageGrabberForm';
 
@@ -14,25 +14,19 @@ export const DataSelectionView = ({
   const [currentFile, setCurrentFile] = useState<File>(files[0]);
   const [currentImageGrabs, setCurrentImageGrabs] = useState<ImageGrab[]>([]);
 
-  const imageGrabHandler = (data?: ImageGrab): void => {
+  const handleImageGrab = (data?: ImageGrab): void => {
     if (data != null) {
       setCurrentImageGrabs(currentImageGrabs.concat(data));
-      console.debug(data);
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <Fragment>
       <ImageGrabberForm
         image={currentFile}
-        imageGrabHandler={imageGrabHandler}
+        imageGrabHandler={handleImageGrab}
       />
       <Button variant='contained'>Finish</Button>
-    </Box>
+    </Fragment>
   );
 };

@@ -1,10 +1,10 @@
 import { Box, Button, Typography } from '@mui/material';
 
 interface UploadViewProps {
-  onFileChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  fileChangeHandler: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
-export const UploadView = ({ onFileChange }: UploadViewProps): JSX.Element => {
+export const UploadView = ({ fileChangeHandler }: UploadViewProps): JSX.Element => {
   return (
     <Box
       sx={{
@@ -28,7 +28,7 @@ export const UploadView = ({ onFileChange }: UploadViewProps): JSX.Element => {
           accept='image/*'
           multiple
           type='file'
-          onChange={onFileChange}
+          onChange={fileChangeHandler}
         />
       </Button>
     </Box>

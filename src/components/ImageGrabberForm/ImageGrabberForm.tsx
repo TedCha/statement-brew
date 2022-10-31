@@ -9,20 +9,21 @@ interface RectangleGrabber {
   dy: number;
 }
 
-interface ImageCropperProps {
+interface ImageGrabberProps {
   image: File;
   imageGrabHandler: (data?: ImageGrab) => void;
 }
 
 // TODO: Implement boundries for touch events
+// TODO: Implement translation of grab on window resize
 export const ImageGrabberForm = ({
   image,
   imageGrabHandler,
-}: ImageCropperProps): JSX.Element => {
-  const isGrabbing = useRef(false);
+}: ImageGrabberProps): JSX.Element => {
   const fieldNameInputElement = useRef<HTMLInputElement>();
   const grabElement = useRef<HTMLDivElement>();
   const imgElement = useRef<HTMLImageElement>();
+  const isGrabbing = useRef(false);
   const grabPosition = useRef<RectangleGrabber>({
     x: 0,
     y: 0,
@@ -37,20 +38,27 @@ export const ImageGrabberForm = ({
     const grabRect = grabElement.current?.getBoundingClientRect();
 
     if (
-      imgRect == null ||
-      grabRect == null ||
-      fieldNameInputElement.current?.value == null
+      imgRect != null &&
+      grabRect != null &&
+      fieldNameInputElement.current?.value != null
     ) {
-      imageGrabHandler();
-    } else {
       imageGrabHandler({
-        [fieldNameInputElement.current.value]: {
-          left: grabRect.left - imgRect.left,
-          top: grabRect.top - imgRect.top,
-          width: grabRect.width,
-          height: grabRect.height,
-        },
+        name: fieldNameInputElement.current.value,
+        left: grabRect.left - imgRect.left,
+        top: grabRect.top - imgRect.top,
+        width: grabRect.width,
+        height: grabRect.height,
       });
+    } else {
+      // TODO: Error Handling
+    }
+
+    // Reset the form
+    if (e.target instanceof HTMLFormElement && grabElement.current != null) {
+      e.target.reset();
+      grabElement.current.style.display = 'none';
+    } else {
+      // TODO: Error Handling
     }
   };
 
@@ -77,7 +85,7 @@ export const ImageGrabberForm = ({
         grabPosition.current.dy = e.nativeEvent.touches[0].clientY;
       }
 
-      showRectangle();
+      showGrab();
     }
   };
 
@@ -85,7 +93,7 @@ export const ImageGrabberForm = ({
     isGrabbing.current = false;
   };
 
-  const showRectangle = (): void => {
+  const showGrab = (): void => {
     if (grabElement.current != null) {
       grabElement.current.style.display = 'block';
       grabElement.current.style.position = 'absolute';

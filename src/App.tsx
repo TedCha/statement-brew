@@ -6,7 +6,7 @@ const App = (): JSX.Element => {
   const [selectedFiles, setSelectedFiles] = useState<FileList>();
   const [statementData, setStatementData] = useState<string[][]>([[]]);
 
-  const fileChangeHandler = (e: React.FormEvent<HTMLInputElement>): void => {
+  const handleFileChange = (e: React.FormEvent<HTMLInputElement>): void => {
     if (e.currentTarget.files != null) {
       setSelectedFiles(e.currentTarget.files);
     }
@@ -24,7 +24,7 @@ const App = (): JSX.Element => {
         >
           <Typography variant='h3'>Statement Brew</Typography>
           {selectedFiles == null ? (
-            <UploadView onFileChange={fileChangeHandler} />
+            <UploadView fileChangeHandler={handleFileChange} />
           ) : (
             <DataSelectionView
               files={selectedFiles}
