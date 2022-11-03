@@ -34,24 +34,32 @@ export const ImageGrabberForm = ({
   const submitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
+    if (
+      imgElement.current == null ||
+      grabElement.current == null ||
+      fieldNameInputElement.current?.value == null
+    ) {
+      // TODO: Error Handling
+      console.error('one or more references are null');
+      return;
+    }
+
     const imgRect = imgElement.current?.getBoundingClientRect();
     const grabRect = grabElement.current?.getBoundingClientRect();
 
-    if (
-      imgRect != null &&
-      grabRect != null &&
-      fieldNameInputElement.current?.value != null
-    ) {
-      imageGrabHandler({
-        name: fieldNameInputElement.current.value,
-        left: grabRect.left - imgRect.left,
-        top: grabRect.top - imgRect.top,
-        width: grabRect.width,
-        height: grabRect.height,
-      });
-    } else {
-      // TODO: Error Handling
-    }
+    // Since we want to use the high resolution base image for OCR processing
+    // but scale the image down when rendering, we need to calculate multipliers
+    // in order to scale the grab to the base image size
+    const widthMultiplier = imgElement.current.naturalWidth / imgRect.width;
+    const heightMultiplier = imgElement.current.naturalHeight / imgRect.height;
+
+    imageGrabHandler({
+      name: fieldNameInputElement.current.value,
+      left: (grabRect.left - imgRect.left) * widthMultiplier,
+      top: (grabRect.top - imgRect.top) * heightMultiplier,
+      width: grabRect.width * widthMultiplier,
+      height: grabRect.height * heightMultiplier,
+    });
 
     // Reset the form
     if (e.target instanceof HTMLFormElement && grabElement.current != null) {
@@ -59,6 +67,7 @@ export const ImageGrabberForm = ({
       grabElement.current.style.display = 'none';
     } else {
       // TODO: Error Handling
+      console.error('failed to reset form');
     }
   };
 
@@ -126,7 +135,7 @@ export const ImageGrabberForm = ({
       <Box
         ref={grabElement}
         sx={{
-          border: 'solid 2px red',
+          border: 'solid 1px red',
           pointerEvents: 'none',
           display: 'none',
         }}

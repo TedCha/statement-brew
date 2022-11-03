@@ -4,7 +4,7 @@ import { UploadView, DataSelectionView } from './components';
 
 const App = (): JSX.Element => {
   const [selectedFiles, setSelectedFiles] = useState<FileList>();
-  const [statementData, setStatementData] = useState<string[][]>([[]]);
+  const [statementData, setStatementData] = useState<string[][]>([]);
 
   const handleFileChange = (e: React.FormEvent<HTMLInputElement>): void => {
     if (e.currentTarget.files != null) {
