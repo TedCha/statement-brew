@@ -48,8 +48,8 @@ export const ImageGrabberForm = ({
     const grabRect = grabElement.current?.getBoundingClientRect();
 
     // Since we want to use the high resolution base image for OCR processing
-    // but scale the image down when rendering, we need to calculate multipliers
-    // in order to scale the grab to the base image size
+    // but a smaller scale of the image when rendering in HTML, we need to calculate
+    // multipliers in order to scale the grab to the base image size
     const widthMultiplier = imgElement.current.naturalWidth / imgRect.width;
     const heightMultiplier = imgElement.current.naturalHeight / imgRect.height;
 
@@ -104,16 +104,14 @@ export const ImageGrabberForm = ({
 
   const showGrab = (): void => {
     if (grabElement.current != null) {
-      grabElement.current.style.display = 'block';
-      grabElement.current.style.position = 'absolute';
-      grabElement.current.style.left = `${grabPosition.current.x}px`;
-      grabElement.current.style.top = `${grabPosition.current.y}px`;
-      grabElement.current.style.width = `${
-        grabPosition.current.dx - grabPosition.current.x
-      }px`;
-      grabElement.current.style.height = `${
-        grabPosition.current.dy - grabPosition.current.y
-      }px`;
+      Object.assign(grabElement.current.style, {
+        display: 'block',
+        position: 'absolute',
+        left: `${grabPosition.current.x}px`,
+        top: `${grabPosition.current.y}px`,
+        width: `${grabPosition.current.dx - grabPosition.current.x}px`,
+        height: `${grabPosition.current.dy - grabPosition.current.y}px`,
+      });
     }
   };
 

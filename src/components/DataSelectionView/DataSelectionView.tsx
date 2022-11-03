@@ -33,7 +33,7 @@ export const DataSelectionView = ({
           rectangle: rect,
         });
 
-        // TODO: Text processing
+        // TODO: Text processing; convert to csv
         console.debug(text);
       }
     })();
