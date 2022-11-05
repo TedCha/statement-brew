@@ -2,7 +2,12 @@ import { CssBaseline, Container, Typography } from '@mui/material';
 import React, { Fragment, useState } from 'react';
 import { UploadView, DataSelectionView } from './components';
 
+interface ApplicationState {
+  status: 'uploading' | 'selecting' | 'previewing' | 'downloading'
+}
+
 const App = (): JSX.Element => {
+  const [currentStatus, setCurrentStatus] = useState<ApplicationState["status"]>('uploading');
   const [selectedFiles, setSelectedFiles] = useState<FileList>();
   const [statementData, setStatementData] = useState<string[][]>([]);
 
