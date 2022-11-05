@@ -1,21 +1,29 @@
 import { CssBaseline, Container, Typography } from '@mui/material';
 import React, { Fragment, useState } from 'react';
-import { UploadView, DataSelectionView } from './components';
-
-interface ApplicationState {
-  status: 'uploading' | 'selecting' | 'previewing' | 'downloading'
-}
+import { UploadView, SelectionView } from './components';
 
 const App = (): JSX.Element => {
-  const [currentStatus, setCurrentStatus] = useState<ApplicationState["status"]>('uploading');
   const [selectedFiles, setSelectedFiles] = useState<FileList>();
-  const [statementData, setStatementData] = useState<string[][]>([]);
+  const [tableData, setTableData] = useState<string[][]>([]);
 
   const handleFileChange = (e: React.FormEvent<HTMLInputElement>): void => {
     if (e.currentTarget.files != null) {
       setSelectedFiles(e.currentTarget.files);
     }
   };
+
+  let view = <Typography>Loading...</Typography>;
+  if (selectedFiles == null) {
+    view = <UploadView fileChangeHandler={handleFileChange} />;
+  } else if (selectedFiles != null && tableData.length === 0) {
+    view = <SelectionView files={selectedFiles} setTableData={setTableData} />;
+  } else if (selectedFiles != null && tableData.length !== 0) {
+    // TODO: PreviewView
+    view = <Typography>{tableData.toString()}</Typography>;
+  } else {
+    // TODO: ErrorView
+    view = <Typography>Error</Typography>;
+  }
 
   return (
     <Fragment>
@@ -27,15 +35,8 @@ const App = (): JSX.Element => {
             minHeight: '100vh',
           }}
         >
-          <Typography variant='h3'>Statement Brew</Typography>
-          {selectedFiles == null ? (
-            <UploadView fileChangeHandler={handleFileChange} />
-          ) : (
-            <DataSelectionView
-              files={selectedFiles}
-              setStatementData={setStatementData}
-            />
-          )}
+          <Typography variant='h3'>Table Brew</Typography>
+          {view}
         </Container>
       </CssBaseline>
     </Fragment>

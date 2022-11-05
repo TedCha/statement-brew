@@ -98,7 +98,7 @@ export const ImageGrabberForm = ({
     }
   };
 
-  const grabEndHandler = (e: React.SyntheticEvent<HTMLImageElement>): void => {
+  const grabEndHandler = (): void => {
     isGrabbing.current = false;
   };
 
