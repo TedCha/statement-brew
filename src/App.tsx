@@ -1,6 +1,6 @@
 import { CssBaseline, Container, Typography } from '@mui/material';
 import React, { Fragment, useState } from 'react';
-import { UploadView, SelectionView } from './components';
+import { UploadView, SelectionView, PreviewView } from './components';
 
 const App = (): JSX.Element => {
   const [selectedFiles, setSelectedFiles] = useState<FileList>();
@@ -12,17 +12,15 @@ const App = (): JSX.Element => {
     }
   };
 
-  let view = <Typography>Loading...</Typography>;
+  let view = <Typography>Loading...</Typography>; // TODO: LoadingView
   if (selectedFiles == null) {
     view = <UploadView fileChangeHandler={handleFileChange} />;
   } else if (selectedFiles != null && tableData.length === 0) {
     view = <SelectionView files={selectedFiles} setTableData={setTableData} />;
   } else if (selectedFiles != null && tableData.length !== 0) {
-    // TODO: PreviewView
-    view = <Typography>{tableData.toString()}</Typography>;
+    view = <PreviewView data={tableData}></PreviewView>;
   } else {
-    // TODO: ErrorView
-    view = <Typography>Error</Typography>;
+    view = <Typography>Error</Typography>; // TODO: ErrorView
   }
 
   return (
