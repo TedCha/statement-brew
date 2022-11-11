@@ -1,6 +1,7 @@
-import { Box, Button, TextField } from '@mui/material';
 import React, { useRef } from 'react';
 import { ImageGrab } from 'src/interfaces';
+import { Button } from '../Button';
+import { InputField } from '../InputField';
 
 interface RectangleGrabber {
   x: number;
@@ -20,9 +21,9 @@ export const ImageGrabberForm = ({
   image,
   imageGrabHandler,
 }: ImageGrabberProps): JSX.Element => {
-  const fieldNameInputElement = useRef<HTMLInputElement>();
-  const grabElement = useRef<HTMLDivElement>();
-  const imgElement = useRef<HTMLImageElement>();
+  const fieldNameInputElement = useRef<HTMLInputElement>(null);
+  const grabElement = useRef<HTMLDivElement>(null);
+  const imgElement = useRef<HTMLImageElement>(null);
   const isGrabbing = useRef(false);
   const grabPosition = useRef<RectangleGrabber>({
     x: 0,
@@ -64,7 +65,7 @@ export const ImageGrabberForm = ({
     // Reset the form
     if (e.target instanceof HTMLFormElement && grabElement.current != null) {
       e.target.reset();
-      grabElement.current.style.display = 'none';
+      grabElement.current.classList.add('hidden');
     } else {
       // TODO: Error Handling
       console.error('failed to reset form');
@@ -104,9 +105,10 @@ export const ImageGrabberForm = ({
 
   const showGrab = (): void => {
     if (grabElement.current != null) {
+      grabElement.current.classList.remove('hidden');
+      grabElement.current.classList.add('block');
+
       Object.assign(grabElement.current.style, {
-        display: 'block',
-        position: 'absolute',
         left: `${grabPosition.current.x}px`,
         top: `${grabPosition.current.y}px`,
         width: `${grabPosition.current.dx - grabPosition.current.x}px`,
@@ -116,30 +118,14 @@ export const ImageGrabberForm = ({
   };
 
   return (
-    <Box
-      component='form'
-      onSubmit={submitHandler}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <TextField
-        label='Field Name'
-        variant='outlined'
-        required
-        inputRef={fieldNameInputElement}
-      />
-      <Box
+    <form onSubmit={submitHandler} className='flex flex-col'>
+      <InputField label={'Column Name'} ref={fieldNameInputElement} required />
+      <div
+        className='border-solid border-2 border-rose-500 pointer-events-none absolute hidden'
         ref={grabElement}
-        sx={{
-          border: 'solid 1px red',
-          pointerEvents: 'none',
-          display: 'none',
-        }}
-      ></Box>
-      <Box
-        component='img'
+      ></div>
+      <img
+        className='max-w-full max-h-full select-none'
         alt='Statement File' // TODO: Index statement file img alt
         src={URL.createObjectURL(image)}
         onMouseDown={grabStartHandler}
@@ -150,23 +136,10 @@ export const ImageGrabberForm = ({
         onTouchEnd={grabEndHandler}
         draggable={false}
         ref={imgElement}
-        sx={{
-          maxWidth: '100%',
-          maxHeight: '100%',
-          userSelect: 'none',
-          border: 'solid 2px blue',
-        }}
       />
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Button variant='contained' type='submit'>
-          Set
-        </Button>
-      </Box>
-    </Box>
+      <div className='flex justify-between'>
+        <Button type='submit'>Set</Button>
+      </div>
+    </form>
   );
 };

@@ -1,46 +1,38 @@
-import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableContainer,
-  Button,
-} from '@mui/material';
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
 import { buildCSV } from '../../utils';
+import { Button } from '../Button';
 
 interface PreviewViewProps {
   data: string[][];
 }
 
 export const PreviewView = ({ data }: PreviewViewProps): JSX.Element => {
+  const anchorRef = useRef<HTMLAnchorElement>(null);
   return (
     <Fragment>
-      <TableContainer sx={{ maxHeight: '50vh' }}>
-        <Table stickyHeader size='small'>
-          <TableHead>
-            <TableRow>
+        <table> {/* stickyHeader size='small' */}
+          <thead>
+            <tr>
               {data[0].map((column) => (
-                <TableCell key={column}>{column}</TableCell>
+                <th key={column}>{column}</th>
               ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
+            </tr>
+          </thead>
+          <tbody>
             {data.slice(1).map((row, i) => (
               // TODO: Implement better keys
-              <TableRow key={`row${i}`}>
+              <tr key={`row${i}`}>
                 {row.map((value, j) => (
-                  <TableCell key={`cell${i}${j}`}>{value}</TableCell>
+                  <td key={`cell${i}${j}`}>{value}</td>
                 ))}
-              </TableRow>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
       {/* TODO: Figure out how to rename file output */}
-      <Button variant='contained' href={buildCSV(data)}>
+      <Button onClick={() => anchorRef.current?.click()}>
         Download
+        <a ref={anchorRef} href={buildCSV(data)}></a>
       </Button>
     </Fragment>
   );

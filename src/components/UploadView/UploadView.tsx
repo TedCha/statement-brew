@@ -1,29 +1,27 @@
-import { Box, Button, Typography } from '@mui/material';
+import { useRef } from 'react';
+import { Button } from '../Button';
 
 interface UploadViewProps {
   fileChangeHandler: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
-export const UploadView = ({ fileChangeHandler }: UploadViewProps): JSX.Element => {
+export const UploadView = ({
+  fileChangeHandler,
+}: UploadViewProps): JSX.Element => {
+  const inputRef = useRef<HTMLInputElement>(null);
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100%',
-      }}
-    >
-      <Typography>
+    <div className='flex flex-col justify-center items-center min-h-full'>
+      <p>
         Lorem exercitation consequat minim cillum enim est do nisi. Minim
         proident sint exercitation dolore ullamco aliquip aliqua mollit
         consequat fugiat dolore magna occaecat ad. Dolore mollit ut elit ipsum
         labore irure sint. Ullamco pariatur eiusmod non ut minim irure sint.
-      </Typography>
-      <Button variant='contained' component='label'>
-        Start Brewin&apos;
+      </p>
+
+      <Button onClick={() => inputRef.current?.click()}>
+        Start Brewing!
         <input
+          ref={inputRef}
           hidden
           accept='image/*'
           multiple
@@ -31,6 +29,6 @@ export const UploadView = ({ fileChangeHandler }: UploadViewProps): JSX.Element 
           onChange={fileChangeHandler}
         />
       </Button>
-    </Box>
+    </div>
   );
 };

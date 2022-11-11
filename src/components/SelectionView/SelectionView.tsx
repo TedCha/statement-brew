@@ -1,8 +1,8 @@
-import { Button, Typography } from '@mui/material';
 import React, { Fragment, useRef, useState } from 'react';
 import { ImageGrab } from 'src/interfaces';
 import { ImageGrabberForm } from '../ImageGrabberForm';
 import { createScheduler, createWorker } from 'tesseract.js';
+import { Button } from '../Button';
 
 interface SelectionViewProps {
   files: FileList;
@@ -114,7 +114,7 @@ export const SelectionView = ({
 
   // TODO: Flesh out loading
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return <p>Loading...</p>;
   }
 
   return (
@@ -123,9 +123,7 @@ export const SelectionView = ({
         image={currentFile}
         imageGrabHandler={handleImageGrab}
       />
-      <Button variant='contained' onClick={handleFinishClick}>
-        Finish
-      </Button>
+      <Button onClick={handleFinishClick}>Finish</Button>
     </Fragment>
   );
 };

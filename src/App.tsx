@@ -1,5 +1,4 @@
-import { CssBaseline, Container, Typography } from '@mui/material';
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { UploadView, SelectionView, PreviewView } from './components';
 
 const App = (): JSX.Element => {
@@ -12,7 +11,7 @@ const App = (): JSX.Element => {
     }
   };
 
-  let view = <Typography>Loading...</Typography>; // TODO: LoadingView
+  let view = <p>Loading...</p>; // TODO: LoadingView
   if (selectedFiles == null) {
     view = <UploadView fileChangeHandler={handleFileChange} />;
   } else if (selectedFiles != null && tableData.length === 0) {
@@ -20,24 +19,16 @@ const App = (): JSX.Element => {
   } else if (selectedFiles != null && tableData.length !== 0) {
     view = <PreviewView data={tableData}></PreviewView>;
   } else {
-    view = <Typography>Error</Typography>; // TODO: ErrorView
+    view = <p>Error</p>; // TODO: ErrorView
   }
 
   return (
-    <Fragment>
-      <CssBaseline>
-        <Container
-          component='main'
-          maxWidth='sm'
-          sx={{
-            minHeight: '100vh',
-          }}
-        >
-          <Typography variant='h3'>Table Brew</Typography>
-          {view}
-        </Container>
-      </CssBaseline>
-    </Fragment>
+    <div className='max-w-full min-h-screen flex flex-col justify-center items-center'>
+      <div className='w-6/12 max-w-xl min-h-screen'>
+        <h1 className='text-lg'>Table Brew</h1>
+        {view}
+      </div>
+    </div>
   );
 };
 
