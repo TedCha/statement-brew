@@ -13,6 +13,7 @@ interface RectangleGrabber {
 interface ImageGrabberProps {
   image: File;
   imageGrabHandler: (data?: ImageGrab) => void;
+  finishGrabsHandler: () => void;
 }
 
 // TODO: Implement boundries for touch events
@@ -20,6 +21,7 @@ interface ImageGrabberProps {
 export const ImageGrabberForm = ({
   image,
   imageGrabHandler,
+  finishGrabsHandler,
 }: ImageGrabberProps): JSX.Element => {
   const fieldNameInputElement = useRef<HTMLInputElement>(null);
   const grabElement = useRef<HTMLDivElement>(null);
@@ -32,7 +34,7 @@ export const ImageGrabberForm = ({
     dy: 0,
   });
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
+  const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
     if (
@@ -118,7 +120,7 @@ export const ImageGrabberForm = ({
   };
 
   return (
-    <form onSubmit={submitHandler} className='flex flex-col'>
+    <form onSubmit={formSubmitHandler} className='flex flex-col'>
       <InputField label={'Column Name'} ref={fieldNameInputElement} required />
       <div
         className='border-solid border-2 border-rose-500 pointer-events-none absolute hidden'
@@ -137,8 +139,9 @@ export const ImageGrabberForm = ({
         draggable={false}
         ref={imgElement}
       />
-      <div className='flex justify-between'>
+      <div className='flex justify-end gap-3'>
         <Button type='submit'>Set</Button>
+        <Button onClick={finishGrabsHandler}>Finish</Button>
       </div>
     </form>
   );

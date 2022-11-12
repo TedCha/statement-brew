@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 
 interface InputFieldProps extends React.HTMLProps<HTMLInputElement> {
-  required?: boolean;
+  required?: boolean; // TODO: Implement required functionality
 }
 
 export const InputField = forwardRef(function InputField(

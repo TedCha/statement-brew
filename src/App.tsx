@@ -24,7 +24,7 @@ const App = (): JSX.Element => {
 
   return (
     <div className='max-w-full min-h-screen flex flex-col justify-center items-center'>
-      <div className='w-6/12 max-w-xl min-h-screen'>
+      <div className='w-5/6 max-w-xl min-h-screen'>
         <h1 className='text-lg'>Table Brew</h1>
         {view}
       </div>

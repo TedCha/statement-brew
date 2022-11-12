@@ -10,8 +10,8 @@ export const PreviewView = ({ data }: PreviewViewProps): JSX.Element => {
   const anchorRef = useRef<HTMLAnchorElement>(null);
   return (
     <Fragment>
-        <table> {/* stickyHeader size='small' */}
-          <thead>
+        <table className='overflow-y-auto block max-h-96'> {/* stickyHeader size='small' */}
+          <thead className='bg-white border-b sticky top-0'>
             <tr>
               {data[0].map((column) => (
                 <th key={column}>{column}</th>

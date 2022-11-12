@@ -1,8 +1,7 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ImageGrab } from 'src/interfaces';
 import { ImageGrabberForm } from '../ImageGrabberForm';
 import { createScheduler, createWorker } from 'tesseract.js';
-import { Button } from '../Button';
 
 interface SelectionViewProps {
   files: FileList;
@@ -70,7 +69,7 @@ export const SelectionView = ({
     })()
       .then((results) => {
         if (tableData.current.length === 0) {
-          // set up data in array of arrays 
+          // set up data in array of arrays
           // (ex: [[col1, col2], [row1.1, row2.1], [row1.2, row2.2]...])
           const data: string[][] = Array.from(
             new Array(results[0].data.lines.length + 1),
@@ -118,12 +117,10 @@ export const SelectionView = ({
   }
 
   return (
-    <Fragment>
-      <ImageGrabberForm
-        image={currentFile}
-        imageGrabHandler={handleImageGrab}
-      />
-      <Button onClick={handleFinishClick}>Finish</Button>
-    </Fragment>
+    <ImageGrabberForm
+      image={currentFile}
+      imageGrabHandler={handleImageGrab}
+      finishGrabsHandler={handleFinishClick}
+    />
   );
 };
