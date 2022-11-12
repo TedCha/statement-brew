@@ -23,9 +23,8 @@ const App = (): JSX.Element => {
   }
 
   return (
-    <div className='max-w-full min-h-screen flex flex-col justify-center items-center'>
-      <div className='w-5/6 max-w-xl min-h-screen'>
-        <h1 className='text-lg'>Table Brew</h1>
+    <div className='max-w-full min-h-screen max-h-screen flex flex-col justify-center items-center bg-stone-50'>
+      <div className='w-5/6 max-w-2xl flex flex-col items-center'>
         {view}
       </div>
     </div>

@@ -10,8 +10,9 @@ export const UploadView = ({
 }: UploadViewProps): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   return (
-    <div className='flex flex-col justify-center items-center min-h-full'>
-      <p>
+    <div className='flex flex-col justify-center items-center min-h-full rounded-md shadow-lg p-6 max-w-sm'>
+      <h1 className='text-3xl font-bold p-2'>Table Brew</h1>
+      <p className='pb-4'>
         Lorem exercitation consequat minim cillum enim est do nisi. Minim
         proident sint exercitation dolore ullamco aliquip aliqua mollit
         consequat fugiat dolore magna occaecat ad. Dolore mollit ut elit ipsum

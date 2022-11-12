@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { ImageGrab } from 'src/interfaces';
 import { Button } from '../Button';
-import { InputField } from '../InputField';
 
 interface RectangleGrabber {
   x: number;
@@ -23,7 +22,6 @@ export const ImageGrabberForm = ({
   imageGrabHandler,
   finishGrabsHandler,
 }: ImageGrabberProps): JSX.Element => {
-  const fieldNameInputElement = useRef<HTMLInputElement>(null);
   const grabElement = useRef<HTMLDivElement>(null);
   const imgElement = useRef<HTMLImageElement>(null);
   const isGrabbing = useRef(false);
@@ -37,11 +35,7 @@ export const ImageGrabberForm = ({
   const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
-    if (
-      imgElement.current == null ||
-      grabElement.current == null ||
-      fieldNameInputElement.current?.value == null
-    ) {
+    if (imgElement.current == null || grabElement.current == null) {
       // TODO: Error Handling
       console.error('one or more references are null');
       return;
@@ -57,7 +51,6 @@ export const ImageGrabberForm = ({
     const heightMultiplier = imgElement.current.naturalHeight / imgRect.height;
 
     imageGrabHandler({
-      name: fieldNameInputElement.current.value,
       left: (grabRect.left - imgRect.left) * widthMultiplier,
       top: (grabRect.top - imgRect.top) * heightMultiplier,
       width: grabRect.width * widthMultiplier,
@@ -121,24 +114,26 @@ export const ImageGrabberForm = ({
 
   return (
     <form onSubmit={formSubmitHandler} className='flex flex-col'>
-      <InputField label={'Column Name'} ref={fieldNameInputElement} required />
       <div
         className='border-solid border-2 border-rose-500 pointer-events-none absolute hidden'
         ref={grabElement}
       ></div>
-      <img
-        className='max-w-full max-h-full select-none'
-        alt='Statement File' // TODO: Index statement file img alt
-        src={URL.createObjectURL(image)}
-        onMouseDown={grabStartHandler}
-        onTouchStart={grabStartHandler}
-        onMouseMove={grabMoveHandler}
-        onTouchMove={grabMoveHandler}
-        onMouseUp={grabEndHandler}
-        onTouchEnd={grabEndHandler}
-        draggable={false}
-        ref={imgElement}
-      />
+      <div className='py-4'>
+        <img
+          className='max-w-full max-h-full select-none shadow-lg'
+          alt='Statement File' // TODO: Index statement file img alt
+          src={URL.createObjectURL(image)}
+          onMouseDown={grabStartHandler}
+          onTouchStart={grabStartHandler}
+          onMouseMove={grabMoveHandler}
+          onTouchMove={grabMoveHandler}
+          onMouseUp={grabEndHandler}
+          onTouchEnd={grabEndHandler}
+          draggable={false}
+          ref={imgElement}
+        />
+      </div>
+
       <div className='flex justify-end gap-3'>
         <Button type='submit'>Set</Button>
         <Button onClick={finishGrabsHandler}>Finish</Button>

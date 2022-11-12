@@ -43,14 +43,13 @@ export const SelectionView = ({
       // TODO: Implement scaling for small images (look into createImageBitmap & canvas)
       const results = (await Promise.all(
         currentImageGrabs.map(
-          async ({ name, ...rectangle }) =>
+          async (rectangle) =>
             await scheduler.current.addJob(
               'recognize',
               currentFile,
               {
                 rectangle,
               },
-              name
             )
         )
       )) as Tesseract.RecognizeResult[];
@@ -77,7 +76,7 @@ export const SelectionView = ({
           );
 
           for (let i = 0; i < results.length; i++) {
-            data[0].push(results[i].jobId);
+            data[0].push(`column${i+1}`);
             for (let j = 0; j < results[i].data.lines.length; j++) {
               data[j + 1].push(results[i].data.lines[j].text.trim());
             }
