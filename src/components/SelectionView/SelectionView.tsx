@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { ImageGrab } from 'src/interfaces';
 import { ImageGrabber } from '../ImageGrabber';
 import { makeJaggedArray } from '../../utils';
 import Tesseract from 'tesseract.js';
+import { Loading } from '../Loading';
+import { ErrorBanner } from '../ErrorBanner';
 
 interface SelectionViewProps {
   files: FileList;
@@ -21,6 +23,7 @@ export const SelectionView = ({
   const [currentFile, setCurrentFile] = useState<File>(files[0]);
   const [currentImageGrabs, setCurrentImageGrabs] = useState<ImageGrab[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<Error>();
   const tableData = useRef<string[][]>([]);
 
   const handleFinishClick = (): void => {
@@ -91,10 +94,7 @@ export const SelectionView = ({
           setTableData(tableData.current);
         }
       })
-      .catch((error) => {
-        // TODO: Error Handling
-        console.error(error);
-      })
+      .catch((e) => setError(e))
       .finally(() => {
         // reset shared state
         setIsProcessing(false);
@@ -108,16 +108,24 @@ export const SelectionView = ({
     }
   };
 
-  // TODO: Flesh out loading
-  if (isLoading || isProcessing) {
-    return <p>Loading...</p>;
+  if (isLoading) {
+    return <Loading>Loading...</Loading>;
+  } else if (isProcessing) {
+    return <Loading>Processing...</Loading>;
   }
 
   return (
-    <ImageGrabber
-      image={currentFile}
-      imageGrabHandler={handleImageGrab}
-      finishGrabsHandler={handleFinishClick}
-    />
+    <Fragment>
+      <ImageGrabber
+        image={currentFile}
+        imageGrabHandler={handleImageGrab}
+        finishGrabsHandler={handleFinishClick}
+      />
+      {error != null && (
+        <ErrorBanner delay={{ time: 4000, fn: () => setError(undefined) }}>
+          {error.message}
+        </ErrorBanner>
+      )}
+    </Fragment>
   );
 };

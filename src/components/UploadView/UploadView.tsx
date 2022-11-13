@@ -10,7 +10,7 @@ export const UploadView = ({
 }: UploadViewProps): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   return (
-    <div className='flex flex-col justify-center items-center min-h-full rounded-md shadow-lg p-6 max-w-sm'>
+    <div className='flex flex-col justify-center items-center min-h-full rounded-md shadow-lg p-6 max-w-sm bg-stone-50'>
       <h1 className='text-3xl font-bold p-2'>Table Brew</h1>
       <p className='pb-4'>
         Table Brew is a utility application for transforming images containing 

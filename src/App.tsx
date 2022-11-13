@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import Tesseract from 'tesseract.js';
-import { UploadView, SelectionView, PreviewView } from './components';
+import { UploadView, SelectionView, PreviewView, Loading } from './components';
 import { setupTesseractScheduler } from './utils';
 
 const App = (): JSX.Element => {
@@ -27,7 +27,7 @@ const App = (): JSX.Element => {
     }
   };
 
-  let view = <p>Loading...</p>; // TODO: LoadingView
+  let view = <Loading>Loading...</Loading>;
   if (selectedFiles == null) {
     view = <UploadView fileChangeHandler={handleFileChange} />;
   } else if (
@@ -45,12 +45,10 @@ const App = (): JSX.Element => {
     );
   } else if (selectedFiles != null && tableData.length !== 0) {
     view = <PreviewView data={tableData}></PreviewView>;
-  } else {
-    view = <p>Error</p>; // TODO: ErrorView
   }
 
   return (
-    <div className='max-w-full min-h-screen max-h-screen flex flex-col justify-center items-center bg-stone-50'>
+    <div className='max-w-full min-h-screen max-h-screen flex flex-col justify-center items-center bg-blue-50'>
       <div className='w-5/6 max-w-2xl flex flex-col items-center'>{view}</div>
     </div>
   );
