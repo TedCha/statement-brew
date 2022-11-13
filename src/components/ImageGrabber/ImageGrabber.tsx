@@ -17,7 +17,7 @@ interface ImageGrabberProps {
 
 // TODO: Implement boundries for touch events
 // TODO: Implement translation of grab on window resize
-export const ImageGrabberForm = ({
+export const ImageGrabber = ({
   image,
   imageGrabHandler,
   finishGrabsHandler,
@@ -32,9 +32,7 @@ export const ImageGrabberForm = ({
     dy: 0,
   });
 
-  const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-
+  const captureHandler = (): void => {
     if (imgElement.current == null || grabElement.current == null) {
       // TODO: Error Handling
       console.error('one or more references are null');
@@ -57,14 +55,8 @@ export const ImageGrabberForm = ({
       height: grabRect.height * heightMultiplier,
     });
 
-    // Reset the form
-    if (e.target instanceof HTMLFormElement && grabElement.current != null) {
-      e.target.reset();
-      grabElement.current.classList.add('hidden');
-    } else {
-      // TODO: Error Handling
-      console.error('failed to reset form');
-    }
+    // Reset the grab element
+    grabElement.current.classList.add('hidden');
   };
 
   const grabStartHandler = (
@@ -113,7 +105,7 @@ export const ImageGrabberForm = ({
   };
 
   return (
-    <form onSubmit={formSubmitHandler} className='flex flex-col'>
+    <div className='flex flex-col'>
       <div
         className='border-solid border-2 border-rose-500 pointer-events-none absolute hidden'
         ref={grabElement}
@@ -135,9 +127,9 @@ export const ImageGrabberForm = ({
       </div>
 
       <div className='flex justify-end gap-3'>
-        <Button type='submit'>Set</Button>
+        <Button onClick={captureHandler}>Capture</Button>
         <Button onClick={finishGrabsHandler}>Finish</Button>
       </div>
-    </form>
+    </div>
   );
 };

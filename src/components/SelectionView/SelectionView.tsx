@@ -1,66 +1,58 @@
 import React, { useRef, useState } from 'react';
 import { ImageGrab } from 'src/interfaces';
-import { ImageGrabberForm } from '../ImageGrabberForm';
-import { createScheduler, createWorker } from 'tesseract.js';
+import { ImageGrabber } from '../ImageGrabber';
+import { makeJaggedArray } from '../../utils';
+import Tesseract from 'tesseract.js';
 
 interface SelectionViewProps {
   files: FileList;
   setTableData: React.Dispatch<React.SetStateAction<string[][]>>;
+  scheduler: Tesseract.Scheduler;
+  isLoading: boolean;
 }
 
 export const SelectionView = ({
   files,
   setTableData,
+  scheduler,
+  isLoading,
 }: SelectionViewProps): JSX.Element => {
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const [currentFile, setCurrentFile] = useState<File>(files[0]);
   const [currentImageGrabs, setCurrentImageGrabs] = useState<ImageGrab[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const tableData = useRef<string[][]>([]);
-
-  // setup tesseract scheduler/workers for image OCR processing
-  const scheduler = useRef(createScheduler());
-  const workers = useRef([createWorker(), createWorker(), createWorker()]);
-  workers.current.forEach((worker) => scheduler.current.addWorker(worker));
-
-  Promise.all(
-    workers.current.map(async (worker) => {
-      await worker.load();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
-    })
-  )
-    .then(() => {
-      setIsLoading(false);
-    })
-    .catch((error) => {
-      // TODO: Error Handling
-      console.error(error);
-    });
 
   const handleFinishClick = (): void => {
     (async () => {
+      // Validate number of grabs is equal to existing number of columns
+      if (tableData.current.length !== 0) {
+        const numOfCaptures = currentImageGrabs.length;
+        const numOfColumns = tableData.current[0].length;
+        if (numOfCaptures !== numOfColumns) {
+          throw Error(`Number of captures not equal to number of columns`);
+        }
+      }
+
+      setIsProcessing(true);
+
       // TODO: Implement scaling for small images (look into createImageBitmap & canvas)
       const results = (await Promise.all(
         currentImageGrabs.map(
           async (rectangle) =>
-            await scheduler.current.addJob(
-              'recognize',
-              currentFile,
-              {
-                rectangle,
-              },
-            )
+            await scheduler.addJob('recognize', currentFile, {
+              rectangle,
+            })
         )
       )) as Tesseract.RecognizeResult[];
 
       // validate that each column is the same length
-      const columnLength = results[0].data.lines.length;
-      const areSameLength = results
-        .slice(1)
-        .every((result) => result.data.lines.length === columnLength);
+      const notSameLength = results.some(
+        (result, i, array) =>
+          result.data.lines.length !== array[0].data.lines.length
+      );
 
-      if (!areSameLength) {
+      if (notSameLength) {
         throw new Error('Column lengths are not the same');
       }
 
@@ -68,31 +60,32 @@ export const SelectionView = ({
     })()
       .then((results) => {
         if (tableData.current.length === 0) {
-          // set up data in array of arrays
+          // set up data in array of arrays structure
           // (ex: [[col1, col2], [row1.1, row2.1], [row1.2, row2.2]...])
-          const data: string[][] = Array.from(
-            new Array(results[0].data.lines.length + 1),
-            () => []
-          );
+          tableData.current = makeJaggedArray(results[0].data.lines.length + 1);
 
           for (let i = 0; i < results.length; i++) {
-            data[0].push(`column${i+1}`);
+            tableData.current[0].push(`column${i + 1}`);
             for (let j = 0; j < results[i].data.lines.length; j++) {
-              data[j + 1].push(results[i].data.lines[j].text.trim());
+              tableData.current[j + 1].push(
+                results[i].data.lines[j].text.trim()
+              );
+            }
+          }
+        } else {
+          const data = makeJaggedArray(results[0].data.lines.length);
+          for (let i = 0; i < results.length; i++) {
+            for (let j = 0; j < results[i].data.lines.length; j++) {
+              data[j].push(results[i].data.lines[j].text.trim());
             }
           }
 
-          tableData.current = data;
-        } else {
-          // TODO: Handle more than one image
+          tableData.current = tableData.current.concat(data);
         }
-        // clear out state for current image and move to the next image
-        setCurrentImageGrabs([]);
 
         if (files?.[currentFileIndex + 1] != null) {
           setCurrentFile(files[currentFileIndex + 1]);
           setCurrentFileIndex(currentFileIndex + 1);
-          console.debug('next file');
         } else {
           // setting table data will move on to the data preview view
           setTableData(tableData.current);
@@ -101,6 +94,11 @@ export const SelectionView = ({
       .catch((error) => {
         // TODO: Error Handling
         console.error(error);
+      })
+      .finally(() => {
+        // reset shared state
+        setIsProcessing(false);
+        setCurrentImageGrabs([]);
       });
   };
 
@@ -111,12 +109,12 @@ export const SelectionView = ({
   };
 
   // TODO: Flesh out loading
-  if (isLoading) {
+  if (isLoading || isProcessing) {
     return <p>Loading...</p>;
   }
 
   return (
-    <ImageGrabberForm
+    <ImageGrabber
       image={currentFile}
       imageGrabHandler={handleImageGrab}
       finishGrabsHandler={handleFinishClick}

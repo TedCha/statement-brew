@@ -1,5 +1,5 @@
 import { Fragment, useRef } from 'react';
-import { buildCSV } from '../../utils';
+import { makeCSVFile } from '../../utils';
 import { Button } from '../Button';
 
 interface PreviewViewProps {
@@ -39,7 +39,7 @@ export const PreviewView = ({ data }: PreviewViewProps): JSX.Element => {
         {/* TODO: Figure out how to rename file output */}
         <Button onClick={() => anchorRef.current?.click()}>
           Download
-          <a ref={anchorRef} href={buildCSV(data)}></a>
+          <a ref={anchorRef} href={makeCSVFile(data)}></a>
         </Button>
       </div>
     </Fragment>
