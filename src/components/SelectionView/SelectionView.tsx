@@ -1,10 +1,10 @@
 import React, { Fragment, useRef, useState } from 'react';
+import Tesseract from 'tesseract.js';
 import { ImageGrab } from 'src/interfaces';
 import { ImageGrabber } from '../ImageGrabber';
 import { makeJaggedArray } from '../../utils';
-import Tesseract from 'tesseract.js';
 import { Loading } from '../Loading';
-import { ErrorBanner } from '../ErrorBanner';
+import { useContextError } from '../../context';
 
 interface SelectionViewProps {
   files: FileList;
@@ -23,8 +23,8 @@ export const SelectionView = ({
   const [currentFile, setCurrentFile] = useState<File>(files[0]);
   const [currentImageGrabs, setCurrentImageGrabs] = useState<ImageGrab[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<Error>();
   const tableData = useRef<string[][]>([]);
+  const setError = useContextError();
 
   const handleFinishClick = (): void => {
     (async () => {
@@ -121,11 +121,6 @@ export const SelectionView = ({
         imageGrabHandler={handleImageGrab}
         finishGrabsHandler={handleFinishClick}
       />
-      {error != null && (
-        <ErrorBanner delay={{ time: 4000, fn: () => setError(undefined) }}>
-          {error.message}
-        </ErrorBanner>
-      )}
     </Fragment>
   );
 };
