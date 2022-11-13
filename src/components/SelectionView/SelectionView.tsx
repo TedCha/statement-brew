@@ -39,7 +39,7 @@ export const SelectionView = ({
 
       setIsProcessing(true);
 
-      // TODO: Implement scaling for small images (look into createImageBitmap & canvas)
+      // TODO v2: Implement scaling for small images (look into createImageBitmap & canvas)
       const results = (await Promise.all(
         currentImageGrabs.map(
           async (rectangle) =>

@@ -17,7 +17,7 @@ interface ImageGrabberProps {
 }
 
 // TODO: Implement boundries for touch events
-// TODO: Implement translation of grab on window resize
+// TODO v2: Implement translation of grab on window resize
 export const ImageGrabber = ({
   image,
   imageGrabHandler,
@@ -117,7 +117,7 @@ export const ImageGrabber = ({
       <div className='py-4'>
         <img
           className='max-w-full max-h-full select-none shadow-lg'
-          alt='Statement File' // TODO: Index statement file img alt
+          alt='Uploaded File'
           src={URL.createObjectURL(image)}
           onMouseDown={grabStartHandler}
           onTouchStart={grabStartHandler}

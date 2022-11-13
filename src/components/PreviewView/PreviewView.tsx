@@ -37,7 +37,7 @@ export const PreviewView = ({ data }: PreviewViewProps): JSX.Element => {
         </table>
       </div>
       <div className='py-4'>
-        {/* TODO: Figure out how to rename file output */}
+        {/* TODO v2: Figure out how to rename file output */}
         <Button onClick={() => anchorRef.current?.click()}>
           Download
           <a ref={anchorRef} href={makeCSVFile(data)}></a>
