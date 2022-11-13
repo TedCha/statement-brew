@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useApplicationError } from '../../context';
 import { ImageGrab } from 'src/interfaces';
 import { Button } from '../Button';
 
@@ -22,6 +23,7 @@ export const ImageGrabber = ({
   imageGrabHandler,
   finishGrabsHandler,
 }: ImageGrabberProps): JSX.Element => {
+  const setApplicationError = useApplicationError();
   const grabElement = useRef<HTMLDivElement>(null);
   const imgElement = useRef<HTMLImageElement>(null);
   const isGrabbing = useRef(false);
@@ -34,8 +36,10 @@ export const ImageGrabber = ({
 
   const captureHandler = (): void => {
     if (imgElement.current == null || grabElement.current == null) {
-      // TODO: Error Handling
-      console.error('one or more references are null');
+      setApplicationError({
+        type: 'fatal',
+        causedBy: new Error('One or more element references are null'),
+      });
       return;
     }
 
@@ -125,7 +129,6 @@ export const ImageGrabber = ({
           ref={imgElement}
         />
       </div>
-
       <div className='flex justify-end gap-3'>
         <Button onClick={captureHandler}>Capture</Button>
         <Button onClick={finishGrabsHandler}>Finish</Button>

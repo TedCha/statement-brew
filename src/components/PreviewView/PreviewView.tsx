@@ -6,6 +6,7 @@ interface PreviewViewProps {
   data: string[][];
 }
 
+// TODO: Add ability to edit column names
 export const PreviewView = ({ data }: PreviewViewProps): JSX.Element => {
   const anchorRef = useRef<HTMLAnchorElement>(null);
   return (

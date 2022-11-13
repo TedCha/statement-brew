@@ -4,7 +4,7 @@ import { ImageGrab } from 'src/interfaces';
 import { ImageGrabber } from '../ImageGrabber';
 import { makeJaggedArray } from '../../utils';
 import { Loading } from '../Loading';
-import { useContextError } from '../../context';
+import { useApplicationError } from '../../context';
 
 interface SelectionViewProps {
   files: FileList;
@@ -19,12 +19,12 @@ export const SelectionView = ({
   scheduler,
   isLoading,
 }: SelectionViewProps): JSX.Element => {
+  const setApplicationError = useApplicationError();
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const [currentFile, setCurrentFile] = useState<File>(files[0]);
   const [currentImageGrabs, setCurrentImageGrabs] = useState<ImageGrab[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const tableData = useRef<string[][]>([]);
-  const setError = useContextError();
 
   const handleFinishClick = (): void => {
     (async () => {
@@ -94,9 +94,9 @@ export const SelectionView = ({
           setTableData(tableData.current);
         }
       })
-      .catch((e) => setError(e))
+      .catch((e) => setApplicationError({type: 'handled', causedBy: e}))
       .finally(() => {
-        // reset shared state
+        // reset component state at step
         setIsProcessing(false);
         setCurrentImageGrabs([]);
       });
