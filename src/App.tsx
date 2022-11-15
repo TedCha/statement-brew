@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Tesseract from 'tesseract.js';
-import { UploadView, SelectionView, PreviewView, Loading } from './components';
+import {
+  UploadView,
+  SelectionView,
+  PreviewView,
+  LoadingMessage,
+} from './components';
 import { ErrorBanner } from './components/ErrorBanner';
+import { FatalErrorMessage } from './components/FatalErrorMessage';
 import { ApplicationError, ErrorContext } from './context';
 import { setupTesseractScheduler } from './utils';
 
@@ -27,10 +33,9 @@ const App = (): JSX.Element => {
     }
   };
 
-  let view = <Loading>Loading...</Loading>;
+  let view = <LoadingMessage>Loading...</LoadingMessage>;
   if (applicationError != null && applicationError.type === 'fatal') {
-    // TODO: Flesh out fatal error view
-    view = <p>Fatal Error: {applicationError.causedBy.message}</p>;
+    view = <FatalErrorMessage />;
   } else if (selectedFiles == null) {
     view = <UploadView fileChangeHandler={handleFileChange} />;
   } else if (
@@ -38,14 +43,17 @@ const App = (): JSX.Element => {
     tableData.length === 0 &&
     scheduler.current != null
   ) {
-    view = (
-      <SelectionView
-        files={selectedFiles}
-        setTableData={setTableData}
-        scheduler={scheduler.current}
-        isLoading={schedulerIsLoading}
-      />
-    );
+    if (schedulerIsLoading) {
+      view = <LoadingMessage>Loading...</LoadingMessage>;
+    } else {
+      view = (
+        <SelectionView
+          files={selectedFiles}
+          setTableData={setTableData}
+          scheduler={scheduler.current}
+        />
+      );
+    }
   } else if (selectedFiles != null && tableData.length !== 0) {
     view = <PreviewView data={tableData}></PreviewView>;
   }
@@ -55,9 +63,13 @@ const App = (): JSX.Element => {
       <div className='max-w-full min-h-screen max-h-screen flex flex-col justify-center items-center bg-blue-50'>
         <div className='w-5/6 max-w-2xl flex flex-col items-center'>{view}</div>
       </div>
-      {applicationError != null && applicationError.type === 'handled' && (
+      {applicationError != null && (
         <ErrorBanner
-          delay={{ time: 4000, fn: () => setApplicationError(undefined) }}
+          clear={
+            applicationError.type === 'handled'
+              ? { delay: 4000, fn: () => setApplicationError(undefined) }
+              : undefined
+          }
         >
           {applicationError.causedBy.message}
         </ErrorBanner>

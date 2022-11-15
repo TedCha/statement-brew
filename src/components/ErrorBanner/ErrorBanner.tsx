@@ -2,8 +2,8 @@ import { Fragment, useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 interface ErrorBannerProps {
-  delay?: {
-    time: 2000 | 4000 | 6000;
+  clear?: {
+    delay: 2000 | 4000 | 6000;
     fn?: () => void;
   };
   children?: React.ReactNode;
@@ -11,50 +11,48 @@ interface ErrorBannerProps {
 
 // TODO: Optimize media queries for mobile
 export const ErrorBanner = ({
-  delay,
+  clear,
   children,
 }: ErrorBannerProps): JSX.Element => {
   const [visible, setVisible] = useState(true);
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(false);
-      delay?.fn?.();
-    }, delay?.time);
-
-    return () => clearTimeout(timer);
-  }, [delay?.time]);
-
-  const animationClasses = ['animate-fade-in'];
-  switch(delay?.time) {
-    case 2000:
-      animationClasses.push('[--duration:2s]');
-      break;
-    case 4000:
-      animationClasses.push('[--duration:4s]');
-      break;
-    case 6000:
-      animationClasses.push('[--duration:6s]');
-      break;
-  }
+    if (clear != null) {
+      setTimeout(() => {
+        setVisible(false);
+        clear?.fn?.();
+      }, clear?.delay);
+    }
+  }, [clear?.delay]);
 
   return (
     <Fragment>
       {visible && (
         <div
           className={clsx(
-            'flex',
-            'gap-2',
-            'absolute',
-            'bottom-4',
-            'left-4',
-            'bg-red-100',
-            'border',
-            'border-red-400',
-            'text-red-600',
-            'rounded',
-            'px-4',
-            'py-3',
-            ...animationClasses
+            [
+              'flex',
+              'gap-2',
+              'bg-red-100',
+              'border',
+              'border-red-400',
+              'text-red-600',
+              'rounded',
+              'px-4',
+              'py-3',
+              'animate-fade-in',
+              'absolute',
+              'bottom-4',
+              'left-4'
+            ],
+            (clear?.delay === 2000) && [
+              '[--duration:2s]'
+            ],
+            (clear?.delay === 4000) && [
+              '[--duration:4s]'
+            ],
+            (clear?.delay === 6000) && [
+              '[--duration:6s]'
+            ]
           )}
           role='alert'
         >

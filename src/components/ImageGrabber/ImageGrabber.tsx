@@ -108,6 +108,7 @@ export const ImageGrabber = ({
     }
   };
 
+  // TODO v2: Make all images the same size with white padding around
   return (
     <div className='flex flex-col'>
       <div

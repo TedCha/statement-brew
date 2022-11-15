@@ -3,21 +3,19 @@ import Tesseract from 'tesseract.js';
 import { ImageGrab } from 'src/interfaces';
 import { ImageGrabber } from '../ImageGrabber';
 import { makeJaggedArray } from '../../utils';
-import { Loading } from '../Loading';
+import { LoadingMessage } from '../LoadingMessage';
 import { useApplicationError } from '../../context';
 
 interface SelectionViewProps {
   files: FileList;
   setTableData: React.Dispatch<React.SetStateAction<string[][]>>;
   scheduler: Tesseract.Scheduler;
-  isLoading: boolean;
 }
 
 export const SelectionView = ({
   files,
   setTableData,
   scheduler,
-  isLoading,
 }: SelectionViewProps): JSX.Element => {
   const setApplicationError = useApplicationError();
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
@@ -94,7 +92,7 @@ export const SelectionView = ({
           setTableData(tableData.current);
         }
       })
-      .catch((e) => setApplicationError({type: 'handled', causedBy: e}))
+      .catch((e) => setApplicationError({ type: 'handled', causedBy: e }))
       .finally(() => {
         // reset component state at step
         setIsProcessing(false);
@@ -108,10 +106,8 @@ export const SelectionView = ({
     }
   };
 
-  if (isLoading) {
-    return <Loading>Loading...</Loading>;
-  } else if (isProcessing) {
-    return <Loading>Processing...</Loading>;
+  if (isProcessing) {
+    return <LoadingMessage>Loading...</LoadingMessage>;
   }
 
   return (

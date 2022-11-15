@@ -1,8 +1,8 @@
-interface LoadingProps {
+interface LoadingMessageProps {
   children?: React.ReactNode;
 }
 
-export const Loading = ({ children }: LoadingProps): JSX.Element => {
+export const LoadingMessage = ({ children }: LoadingMessageProps): JSX.Element => {
   return (
     <div className='flex justify-center items-center' role='status'>
       <svg
