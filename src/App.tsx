@@ -6,9 +6,10 @@ import {
   SelectionView,
   PreviewView,
   LoadingMessage,
+  ErrorBanner,
+  FatalErrorMessage,
+  GithubIcon,
 } from './components';
-import { ErrorBanner } from './components/ErrorBanner';
-import { FatalErrorMessage } from './components/FatalErrorMessage';
 import { ApplicationError, ErrorContext } from './context';
 import { setupTesseractScheduler } from './utils';
 
@@ -92,16 +93,17 @@ const App = (): JSX.Element => {
         </div>
       </div>
       {applicationError != null && (
-        <ErrorBanner
-          clear={
-            applicationError.type === 'handled'
-              ? { delay: 4000, fn: () => setApplicationError(undefined) }
-              : undefined
-          }
-        >
-          {applicationError.causedBy.message}
-        </ErrorBanner>
-      )}
+          <ErrorBanner
+            clear={
+              applicationError.type === 'handled'
+                ? { delay: 4000, fn: () => setApplicationError(undefined) }
+                : undefined
+            }
+          >
+            {applicationError.causedBy.message}
+          </ErrorBanner>
+        )}
+        <GithubIcon />
     </ErrorContext.Provider>
   );
 };
