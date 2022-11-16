@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
 import Tesseract from 'tesseract.js';
 import {
@@ -49,19 +50,46 @@ const App = (): JSX.Element => {
       view = (
         <SelectionView
           files={selectedFiles}
-          setTableData={setTableData}
+          setData={setTableData}
           scheduler={scheduler.current}
         />
       );
     }
   } else if (selectedFiles != null && tableData.length !== 0) {
-    view = <PreviewView data={tableData}></PreviewView>;
+    view = (
+      <PreviewView
+        data={tableData}
+        setData={setTableData}
+        setFiles={setSelectedFiles}
+      />
+    );
   }
 
   return (
     <ErrorContext.Provider value={setApplicationError}>
-      <div className='max-w-full min-h-screen max-h-screen flex flex-col justify-center items-center bg-blue-50'>
-        <div className='w-5/6 max-w-2xl flex flex-col items-center'>{view}</div>
+      <div
+        className={clsx(
+          'max-w-full',
+          'min-h-screen',
+          'max-h-screen',
+          'flex',
+          'flex-col',
+          'justify-center',
+          'items-center',
+          'bg-blue-50'
+        )}
+      >
+        <div
+          className={clsx(
+            'w-5/6',
+            'max-w-2xl',
+            'flex',
+            'flex-col',
+            'items-center'
+          )}
+        >
+          {view}
+        </div>
       </div>
       {applicationError != null && (
         <ErrorBanner

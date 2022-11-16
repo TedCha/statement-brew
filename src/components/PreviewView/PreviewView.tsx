@@ -1,33 +1,50 @@
-import { Fragment, useRef } from 'react';
+import clsx from 'clsx';
+import React, { Fragment, useRef } from 'react';
 import { makeCSVFile } from '../../utils';
 import { Button } from '../Button';
 
 interface PreviewViewProps {
   data: string[][];
+  setData: React.Dispatch<React.SetStateAction<string[][]>>;
+  setFiles: React.Dispatch<React.SetStateAction<FileList|undefined>>;
 }
 
-// TODO: Add ability to edit column names
-export const PreviewView = ({ data }: PreviewViewProps): JSX.Element => {
+// TODO v2: Add ability to edit column names
+export const PreviewView = ({
+  data,
+  setData,
+  setFiles
+}: PreviewViewProps): JSX.Element => {
   const anchorRef = useRef<HTMLAnchorElement>(null);
+
   return (
     <Fragment>
-      <div className='w-full max-h-96 overflow-hidden overflow-y-auto overflow-x-auto rounded-lg'>
+      <div
+        className={clsx(
+          'w-full',
+          'max-h-96',
+          'overflow-hidden',
+          'overflow-y-auto',
+          'overflow-x-auto',
+          'rounded-lg',
+        )}
+      >
         <table className='w-full text-left'>
           <thead className='sticky top-0 bg-gray-200'>
             <tr>
-              {data[0].map((column) => (
-                <th key={column} className='py-3 px-6'>
-                  {column}
-                </th>
+              {data[0].map((column, i) => (
+                <th
+                  className={clsx('py-3', 'px-6')}
+                  key={`header_${column}_${i}`}
+                >{column}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {data.slice(1).map((row, i) => (
-              // TODO: Implement better keys
-              <tr key={`row${i}`} className='border-b bg-gray-50'>
+              <tr key={`row_${i}`} className='border-b bg-gray-50'>
                 {row.map((value, j) => (
-                  <td key={`cell${i}${j}`} className='py-3 px-6'>
+                  <td key={`cell_${i}.${j}`} className='py-3 px-6'>
                     {value}
                   </td>
                 ))}
@@ -36,11 +53,16 @@ export const PreviewView = ({ data }: PreviewViewProps): JSX.Element => {
           </tbody>
         </table>
       </div>
-      <div className='py-4'>
-        {/* TODO v2: Figure out how to rename file output */}
+      <div className='w-full flex py-4 gap-3 justify-end'>
         <Button onClick={() => anchorRef.current?.click()}>
           Download
           <a ref={anchorRef} href={makeCSVFile(data)}></a>
+        </Button>
+        <Button onClick={() => {
+          setData([]);
+          setFiles(undefined);
+        }}>
+          Reset
         </Button>
       </div>
     </Fragment>

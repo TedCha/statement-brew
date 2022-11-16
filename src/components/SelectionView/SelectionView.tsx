@@ -8,13 +8,13 @@ import { useApplicationError } from '../../context';
 
 interface SelectionViewProps {
   files: FileList;
-  setTableData: React.Dispatch<React.SetStateAction<string[][]>>;
+  setData: React.Dispatch<React.SetStateAction<string[][]>>;
   scheduler: Tesseract.Scheduler;
 }
 
 export const SelectionView = ({
   files,
-  setTableData,
+  setData,
   scheduler,
 }: SelectionViewProps): JSX.Element => {
   const setApplicationError = useApplicationError();
@@ -26,6 +26,9 @@ export const SelectionView = ({
 
   const handleFinishClick = (): void => {
     (async () => {
+      if (currentImageGrabs.length === 0) {
+        throw Error('No image captures to process');
+      }
       // Validate number of grabs is equal to existing number of columns
       if (tableData.current.length !== 0) {
         const numOfCaptures = currentImageGrabs.length;
@@ -89,7 +92,7 @@ export const SelectionView = ({
           setCurrentFileIndex(currentFileIndex + 1);
         } else {
           // setting table data will move on to the data preview view
-          setTableData(tableData.current);
+          setData(tableData.current);
         }
       })
       .catch((e) => setApplicationError({ type: 'handled', causedBy: e }))
@@ -107,7 +110,7 @@ export const SelectionView = ({
   };
 
   if (isProcessing) {
-    return <LoadingMessage>Loading...</LoadingMessage>;
+    return <LoadingMessage>Processing...</LoadingMessage>;
   }
 
   return (

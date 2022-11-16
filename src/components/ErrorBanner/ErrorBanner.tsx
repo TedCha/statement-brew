@@ -9,7 +9,6 @@ interface ErrorBannerProps {
   children?: React.ReactNode;
 }
 
-// TODO: Optimize media queries for mobile
 export const ErrorBanner = ({
   clear,
   children,
@@ -29,30 +28,22 @@ export const ErrorBanner = ({
       {visible && (
         <div
           className={clsx(
-            [
-              'flex',
-              'gap-2',
-              'bg-red-100',
-              'border',
-              'border-red-400',
-              'text-red-600',
-              'rounded',
-              'px-4',
-              'py-3',
-              'animate-fade-in',
-              'absolute',
-              'bottom-4',
-              'left-4'
-            ],
-            (clear?.delay === 2000) && [
-              '[--duration:2s]'
-            ],
-            (clear?.delay === 4000) && [
-              '[--duration:4s]'
-            ],
-            (clear?.delay === 6000) && [
-              '[--duration:6s]'
-            ]
+            'flex',
+            'gap-2',
+            'bg-red-100',
+            'border',
+            'border-red-400',
+            'text-red-600',
+            'rounded',
+            'px-4',
+            'py-3',
+            'animate-fade-in',
+            'absolute',
+            'bottom-4',
+            'left-4',
+            clear?.delay === 2000 && '[--duration:2s]',
+            clear?.delay === 4000 && '[--duration:4s]',
+            clear?.delay === 6000 && '[--duration:6s]'
           )}
           role='alert'
         >

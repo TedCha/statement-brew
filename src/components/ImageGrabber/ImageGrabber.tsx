@@ -3,6 +3,11 @@ import { useApplicationError } from '../../context';
 import { ImageGrab } from 'src/interfaces';
 import { Button } from '../Button';
 
+interface Coordinate {
+  x: number;
+  y: number;
+}
+
 interface RectangleGrabber {
   x: number;
   y: number;
@@ -16,7 +21,6 @@ interface ImageGrabberProps {
   finishGrabsHandler: () => void;
 }
 
-// TODO: Implement boundries for touch events
 // TODO v2: Implement translation of grab on window resize
 export const ImageGrabber = ({
   image,
@@ -34,7 +38,23 @@ export const ImageGrabber = ({
     dy: 0,
   });
 
+  const hasGrabPositionChanged = (): boolean => {
+    return !(
+      grabPosition.current.x === 0 &&
+      grabPosition.current.y === 0 &&
+      grabPosition.current.dx === 0 &&
+      grabPosition.current.dy === 0
+    );
+  };
+
   const captureHandler = (): void => {
+    if (!hasGrabPositionChanged()) {
+      setApplicationError({
+        type: 'fatal',
+        causedBy: new Error('No new data to capture'),
+      });
+    }
+
     if (imgElement.current == null || grabElement.current == null) {
       setApplicationError({
         type: 'fatal',
@@ -61,30 +81,42 @@ export const ImageGrabber = ({
 
     // Reset the grab element
     grabElement.current.classList.add('hidden');
+    grabPosition.current = {
+      x: 0,
+      y: 0,
+      dx: 0,
+      dy: 0,
+    };
+  };
+
+  const getClientPosition = (
+    e: React.SyntheticEvent<HTMLImageElement>
+  ): Coordinate => {
+    const position: Coordinate = { x: 0, y: 0 };
+    if (e.nativeEvent instanceof MouseEvent) {
+      position.x = e.nativeEvent.clientX;
+      position.y = e.nativeEvent.clientY;
+    } else if (e.nativeEvent instanceof TouchEvent) {
+      position.x = e.nativeEvent.touches[0].clientX;
+      position.y = e.nativeEvent.touches[0].clientY;
+    }
+    return position;
   };
 
   const grabStartHandler = (
     e: React.SyntheticEvent<HTMLImageElement>
   ): void => {
+    const { x, y } = getClientPosition(e);
     isGrabbing.current = true;
-    if (e.nativeEvent instanceof MouseEvent) {
-      grabPosition.current.x = e.nativeEvent.clientX;
-      grabPosition.current.y = e.nativeEvent.clientY;
-    } else if (e.nativeEvent instanceof TouchEvent) {
-      grabPosition.current.x = e.nativeEvent.touches[0].clientX;
-      grabPosition.current.y = e.nativeEvent.touches[0].clientY;
-    }
+    grabPosition.current.x = x;
+    grabPosition.current.y = y;
   };
 
   const grabMoveHandler = (e: React.SyntheticEvent<HTMLImageElement>): void => {
+    const { x, y } = getClientPosition(e);
     if (isGrabbing.current) {
-      if (e.nativeEvent instanceof MouseEvent) {
-        grabPosition.current.dx = e.nativeEvent.clientX;
-        grabPosition.current.dy = e.nativeEvent.clientY;
-      } else if (e.nativeEvent instanceof TouchEvent) {
-        grabPosition.current.dx = e.nativeEvent.touches[0].clientX;
-        grabPosition.current.dy = e.nativeEvent.touches[0].clientY;
-      }
+      grabPosition.current.dx = x;
+      grabPosition.current.dy = y;
 
       showGrab();
     }
@@ -115,9 +147,9 @@ export const ImageGrabber = ({
         className='border-solid border-2 border-rose-500 pointer-events-none absolute hidden'
         ref={grabElement}
       ></div>
-      <div className='py-4'>
+      <div className='py-4 max-w-full max-h-full '>
         <img
-          className='max-w-full max-h-full select-none shadow-lg'
+          className='select-none touch-none shadow-lg'
           alt='Uploaded File'
           src={URL.createObjectURL(image)}
           onMouseDown={grabStartHandler}
