@@ -12,12 +12,13 @@ export const UploadView = ({
   return (
     <div className='flex flex-col justify-center items-center min-h-full rounded-md shadow-lg p-6 max-w-sm bg-stone-50'>
       <h1 className='text-3xl font-bold p-2'>Table Brew</h1>
-      <p className='pb-4'>
-        Table Brew is a utility application for transforming images containing 
-        tabular data into a CSV file. Using the application is as simple as uploading 
-        one or more images and selecting the specific data to extract.
+      <p className='pb-4 text-center'>
+        Table Brew is a simple application for extracting text from images
+        containing tabular data and tranforming it into CSV.
       </p>
-
+      <p className='pb-4 text-center'>
+        Upload one or more images to get started!
+      </p>
       <Button onClick={() => inputRef.current?.click()}>
         Start Brewing!
         <input
@@ -29,6 +30,7 @@ export const UploadView = ({
           onChange={fileChangeHandler}
         />
       </Button>
+      <p className='pt-4 text-center text-xs italic'>For best results, use a large image.</p>
     </div>
   );
 };

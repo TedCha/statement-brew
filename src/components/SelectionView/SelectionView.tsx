@@ -117,6 +117,7 @@ export const SelectionView = ({
     <Fragment>
       <ImageGrabber
         image={currentFile}
+        isLastFile={files?.[currentFileIndex + 1] == null}
         imageGrabHandler={handleImageGrab}
         finishGrabsHandler={handleFinishClick}
       />

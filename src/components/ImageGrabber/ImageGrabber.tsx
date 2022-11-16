@@ -17,6 +17,7 @@ interface RectangleGrabber {
 
 interface ImageGrabberProps {
   image: File;
+  isLastFile: boolean;
   imageGrabHandler: (data?: ImageGrab) => void;
   finishGrabsHandler: () => void;
 }
@@ -24,6 +25,7 @@ interface ImageGrabberProps {
 // TODO v2: Implement translation of grab on window resize
 export const ImageGrabber = ({
   image,
+  isLastFile,
   imageGrabHandler,
   finishGrabsHandler,
 }: ImageGrabberProps): JSX.Element => {
@@ -164,7 +166,9 @@ export const ImageGrabber = ({
       </div>
       <div className='flex justify-end gap-3'>
         <Button onClick={captureHandler}>Capture</Button>
-        <Button onClick={finishGrabsHandler}>Finish</Button>
+        <Button onClick={finishGrabsHandler}>
+          {isLastFile ? 'Finish' : 'Next'}
+        </Button>
       </div>
     </div>
   );
