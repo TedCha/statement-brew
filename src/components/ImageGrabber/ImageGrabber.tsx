@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useApplicationError } from '../../context';
+import { ApplicationError, useApplicationError } from '../../context';
 import { ImageGrab } from 'src/interfaces';
 import { Button } from '../Button';
 
@@ -50,45 +50,49 @@ export const ImageGrabber = ({
   };
 
   const captureHandler = (): void => {
-    if (!hasGrabPositionChanged()) {
-      setApplicationError({
-        type: 'fatal',
-        causedBy: new Error('No new data to capture'),
+    try {
+      if (!hasGrabPositionChanged()) {
+        throw new ApplicationError('handled', 'No new data to capture');
+      }
+
+      if (imgElement.current == null || grabElement.current == null) {
+        throw new ApplicationError('fatal', 'Internal application error');
+      }
+
+      const imgRect = imgElement.current?.getBoundingClientRect();
+      const grabRect = grabElement.current?.getBoundingClientRect();
+
+      // Since we want to use the high resolution base image for OCR processing
+      // but a smaller scale of the image when rendering in HTML, we need to calculate
+      // multipliers in order to scale the grab to the base image size
+      const widthMultiplier = imgElement.current.naturalWidth / imgRect.width;
+      const heightMultiplier =
+        imgElement.current.naturalHeight / imgRect.height;
+
+      imageGrabHandler({
+        left: (grabRect.left - imgRect.left) * widthMultiplier,
+        top: (grabRect.top - imgRect.top) * heightMultiplier,
+        width: grabRect.width * widthMultiplier,
+        height: grabRect.height * heightMultiplier,
       });
+    } catch (e) {
+      if (e instanceof ApplicationError) {
+        setApplicationError(e);
+      } else {
+        setApplicationError(
+          new ApplicationError('fatal', 'Internal application error')
+        );
+      }
+    } finally {
+      // Reset the grab element
+      grabElement.current?.classList?.add('hidden');
+      grabPosition.current = {
+        x: 0,
+        y: 0,
+        dx: 0,
+        dy: 0,
+      };
     }
-
-    if (imgElement.current == null || grabElement.current == null) {
-      setApplicationError({
-        type: 'fatal',
-        causedBy: new Error('One or more element references are null'),
-      });
-      return;
-    }
-
-    const imgRect = imgElement.current?.getBoundingClientRect();
-    const grabRect = grabElement.current?.getBoundingClientRect();
-
-    // Since we want to use the high resolution base image for OCR processing
-    // but a smaller scale of the image when rendering in HTML, we need to calculate
-    // multipliers in order to scale the grab to the base image size
-    const widthMultiplier = imgElement.current.naturalWidth / imgRect.width;
-    const heightMultiplier = imgElement.current.naturalHeight / imgRect.height;
-
-    imageGrabHandler({
-      left: (grabRect.left - imgRect.left) * widthMultiplier,
-      top: (grabRect.top - imgRect.top) * heightMultiplier,
-      width: grabRect.width * widthMultiplier,
-      height: grabRect.height * heightMultiplier,
-    });
-
-    // Reset the grab element
-    grabElement.current.classList.add('hidden');
-    grabPosition.current = {
-      x: 0,
-      y: 0,
-      dx: 0,
-      dy: 0,
-    };
   };
 
   const getClientPosition = (

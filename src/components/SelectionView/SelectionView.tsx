@@ -4,7 +4,7 @@ import { ImageGrab } from 'src/interfaces';
 import { ImageGrabber } from '../ImageGrabber';
 import { makeJaggedArray } from '../../utils';
 import { LoadingMessage } from '../LoadingMessage';
-import { useApplicationError } from '../../context';
+import { ApplicationError, useApplicationError } from '../../context';
 
 interface SelectionViewProps {
   files: FileList;
@@ -95,7 +95,7 @@ export const SelectionView = ({
           setData(tableData.current);
         }
       })
-      .catch((e) => setApplicationError({ type: 'handled', causedBy: e }))
+      .catch((e) => setApplicationError(new ApplicationError('handled', e)))
       .finally(() => {
         // reset component state at step
         setIsProcessing(false);

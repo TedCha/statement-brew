@@ -26,7 +26,7 @@ const App = (): JSX.Element => {
         setSchedulerIsLoading(false);
         scheduler.current = result;
       })
-      .catch((e) => setApplicationError({ type: 'fatal', causedBy: e }));
+      .catch((e) => setApplicationError(new ApplicationError('fatal', e)));
   }, []);
 
   const handleFileChange = (e: React.FormEvent<HTMLInputElement>): void => {
@@ -100,7 +100,7 @@ const App = (): JSX.Element => {
                 : undefined
             }
           >
-            {applicationError.causedBy.message}
+            {applicationError.message}
           </ErrorBanner>
         )}
         <GithubIcon />

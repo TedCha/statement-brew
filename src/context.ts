@@ -1,19 +1,19 @@
 import React, { createContext } from 'react';
 
-/**
- * Internal wrapper around Error
- */
-export interface ApplicationError {
-  /**
-   * Type of application error
-   * * `fatal` - non-recoverable
-   * * `handled` - handled by component where it happened (e.g. recoverable)
-   */
-  type: 'fatal' | 'handled';
-  /**
-   * Underlying error
-   */
-  causedBy: Error;
+export class ApplicationError extends Error {
+  type: string;
+
+  constructor(type: 'handled' | 'fatal', cause: Error | string) {
+    if (cause instanceof Error) {
+      super(cause.message);
+    } else {
+      super(cause);
+    }
+
+    this.type = type;
+
+    Object.setPrototypeOf(this, ApplicationError.prototype);
+  }
 }
 
 export const ErrorContext = createContext<
